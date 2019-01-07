@@ -1,2 +1,2 @@
 # sorset.github.io
-sors.ml
+sors.info
