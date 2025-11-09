@@ -125,7 +125,7 @@
             const myRefreshFunction = function () {
                 setTimeout(function () {
 
-                    if (_lock == false && alancer._mirrorCheck >= 2) {
+                    if (_lock == false && alancer._mirrorCheck >= 2 && (isUrl2Active == true || isUrl3Active == true)) {
                         _lock = true;
 
                         if (isUrl1Active) {
