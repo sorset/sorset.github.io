@@ -129,8 +129,8 @@
             const myRefreshFunction = function () {
                 setTimeout(function () {
 
-                    if (_lock == false && alancer._mirrorCheck >= 2 && (isUrl2Active == true || isUrl3Active == true)) {
-                        _lock = true;
+                    if (SorsLoadBalancer._lock == false && SorsLoadBalancer._mirrorCheck >= 2 && (isUrl2Active == true || isUrl3Active == true)) {
+                        SorsLoadBalancer._lock = true;
 
                         if (isUrl1Active) {
                             window.location.href = urlPage1 + queryParametars;
