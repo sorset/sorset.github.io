@@ -47,7 +47,7 @@
             request.open('GET', urlPage1, true);
             request.onerror = function () {
                 isUrl1Active = false;
-                Balancer._mirrorCheck++;
+                SorsLoadBalancer._mirrorCheck++;
             };
             request.onload = function () {
                 if (this.status === 404) {
@@ -56,12 +56,12 @@
                 else if (this.status === 200) {
                     isUrl1Active = true;
                 }
-                Balancer._mirrorCheck++;
+                SorsLoadBalancer._mirrorCheck++;
 
             };
             request.onreadystatechange = function () {
                 if (request.readyState === 4 && request.status === 200) {
-                    Balancer._mirrorCheck++;
+                    SorsLoadBalancer._mirrorCheck++;
                     isUrl1Active = false;
                 }
                 else if (request.readyState === 4 && request.status === 0) {
@@ -73,7 +73,7 @@
             request2.open('GET', urlPage2, true);
             request2.onerror = function () {
                 isUrl2Active = false;
-                Balancer._mirrorCheck++;
+                SorsLoadBalancer._mirrorCheck++;
             };
             request2.onload = function () {
                 if (this.status === 404) {
@@ -82,11 +82,11 @@
                 else if (this.status === 200) {
                     isUrl2Active = true;
                 }
-                Balancer._mirrorCheck++;
+                SorsLoadBalancer._mirrorCheck++;
             };
             request2.onreadystatechange = function () {
                 if (request2.readyState === 4 && request2.status === 200) {
-                    Balancer._mirrorCheck++;
+                    SorsLoadBalancer._mirrorCheck++;
                     isUrl2Active = false;
                 }
                 else if (request2.readyState === 4 && request2.status === 0) {
@@ -98,7 +98,7 @@
             request3.open('GET', urlPage3, true);
             request3.onerror = function () {
                 isUrl3Active = false;
-                Balancer._mirrorCheck++;
+                SorsLoadBalancer._mirrorCheck++;
             };
             request3.onload = function () {
                 if (this.status === 404) {
@@ -107,11 +107,11 @@
                 else if (this.status === 200) {
                     isUrl3Active = true;
                 }
-                Balancer._mirrorCheck++;
+                SorsLoadBalancer._mirrorCheck++;
             };
             request3.onreadystatechange = function () {
                 if (request3.readyState === 4 && request3.status === 200) {
-                    Balancer._mirrorCheck++;
+                    SorsLoadBalancer._mirrorCheck++;
                     isUrl3Active = false;
                 }
                 else if (request3.readyState === 4 && request3.status === 0) {
