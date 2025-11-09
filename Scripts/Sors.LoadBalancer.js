@@ -52,10 +52,12 @@
             request.onload = function () {
                 if (this.status === 404) {
                     isUrl1Active = false;
-                    Balancer._mirrorCheck++;
-                    return;
                 }
-                isUrl1Active = true;
+                else if (this.status === 200) {
+                    isUrl1Active = true;
+                }
+                Balancer._mirrorCheck++;
+
             };
             request.onreadystatechange = function () {
                 if (request.readyState === 4 && request.status === 200) {
@@ -76,10 +78,11 @@
             request2.onload = function () {
                 if (this.status === 404) {
                     isUrl2Active = false;
-                    Balancer._mirrorCheck++;
-                    return;
                 }
-                isUrl2Active = true;
+                else if (this.status === 200) {
+                    isUrl2Active = true;
+                }
+                Balancer._mirrorCheck++;
             };
             request2.onreadystatechange = function () {
                 if (request2.readyState === 4 && request2.status === 200) {
@@ -100,10 +103,11 @@
             request3.onload = function () {
                 if (this.status === 404) {
                     isUrl3Active = false;
-                    Balancer._mirrorCheck++;
-                    return;
                 }
-                isUrl3Active = true;
+                else if (this.status === 200) {
+                    isUrl3Active = true;
+                }
+                Balancer._mirrorCheck++;
             };
             request3.onreadystatechange = function () {
                 if (request3.readyState === 4 && request3.status === 200) {
