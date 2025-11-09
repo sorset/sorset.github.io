@@ -129,7 +129,7 @@
             const myRefreshFunction = function () {
                 setTimeout(function () {
 
-                    if (SorsLoadBalancer._lock == false && SorsLoadBalancer._mirrorCheck >= 2 && (isUrl2Active == true || isUrl3Active == true)) {
+                    if (SorsLoadBalancer._lock == false && SorsLoadBalancer._mirrorCheck >= 2 && isUrl2Active != null && isUrl3Active != null) {
                         SorsLoadBalancer._lock = true;
 
                         if (isUrl1Active) {
@@ -262,4 +262,5 @@
 //    });
 
 //})($);
+
 
