@@ -131,8 +131,16 @@
 
                     if (SorsLoadBalancer._lock == false && SorsLoadBalancer._mirrorCheck >= 2 && isUrl2Active != null && isUrl3Active != null) {
                         SorsLoadBalancer._lock = true;
+                        
+                        const raundRoubim = randomInt(0, 2);
 
-                        if (isUrl1Active) {
+                        if (isUrl2Active && isUrl3Active && raundRoubim == 0) {
+                            window.location.href = urlPage2 + queryParametars;
+                        }
+                        else if (isUrl2Active && isUrl3Active && raundRoubim > 0) {
+                            window.location.href = urlPage3 + queryParametars;
+                        }
+                        else if (isUrl1Active) {
                             window.location.href = urlPage1 + queryParametars;
                         }
                         else if (isUrl2Active) {
@@ -187,7 +195,9 @@
     // Overwrite name so constructor name is nicer :D
     SorsLoadBalancer = new SorsLoadBalancer();
 
-
+    function randomInt(min, max) { // min and max included 
+         return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 
     /**
      * is returns a boolean if the typeof an obj is exactly type.
@@ -216,10 +226,6 @@
     function testRunner() {
         var featureNames;
         var feature;
-
-
-
-
     }
 
     // Run each test
@@ -262,5 +268,6 @@
 //    });
 
 //})($);
+
 
 
