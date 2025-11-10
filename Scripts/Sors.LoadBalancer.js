@@ -132,12 +132,13 @@
                     if (SorsLoadBalancer._lock == false && SorsLoadBalancer._mirrorCheck >= 2 && isUrl2Active != null && isUrl3Active != null) {
                         SorsLoadBalancer._lock = true;
                         
-                        const roundRobim = randomInt(0, 2);
+                        const roundRobin = randomInt(0, 2);
+                        window.alert(roudRobin);
 
-                        if (isUrl2Active && isUrl3Active && roundRobim == 0) {
+                        if (isUrl2Active && isUrl3Active && roundRobin == 0) {
                             window.location.href = urlPage2 + queryParametars;
                         }
-                        else if (isUrl2Active && isUrl3Active && roundRobim > 0) {
+                        else if (isUrl2Active && isUrl3Active && roundRobin > 0) {
                             window.location.href = urlPage3 + queryParametars;
                         }
                         else if (isUrl1Active) {
@@ -268,6 +269,7 @@
 //    });
 
 //})($);
+
 
 
 
