@@ -133,7 +133,7 @@
                         SorsLoadBalancer._lock = true;
                         
                         const roundRobin = randomInt(0, 2);
-                        window.alert(roudRobin);
+                        
 
                         if (isUrl2Active && isUrl3Active && roundRobin == 0) {
                             window.location.href = urlPage2 + queryParametars;
@@ -269,6 +269,7 @@
 //    });
 
 //})($);
+
 
 
 
