@@ -52,123 +52,20 @@
             var urlPage2 = "https://" + SorsEndpoint.Server2Domain() + "/";
             var urlPage3 = "https://" + SorsEndpoint.Server3Domain() + "/";
             var currentUrlPage = location.protocol + "//" + $(location).attr('hostname') + "/";
-            
-            var isUrl1Active = null;
-            var isUrl2Active = null;
-            var isUrl3Active = null;
-           
-           /*
+                       
+            var [isUrl2Active, isUrl3Active] = [null, null];
+                     
             (async () => {
-                  isUrl2Active = await SorsLoadBalancer.checkSite(urlPage2);
-                  console.log("Reachable?", isUrl2Active);
-                  SorsLoadBalancer._mirrorCheck++;
-            })();
-
-            (async () => {
-                  isUrl3Active = await SorsLoadBalancer.checkSite(urlPage3);
-                  console.log("Reachable?", isUrl3Active);
-                  SorsLoadBalancer._mirrorCheck++;
-             })();
-            */
-
-
-            (async () => {
-                  const [isUrl2Active, isUrl3Active] = await Promise.all([
-                    SorsLoadBalancer.checkSite(urlPage2),
-                    SorsLoadBalancer.checkSite(urlPage3)
+                  [isUrl2Active, isUrl3Active] = await Promise.all([
+                       SorsLoadBalancer.checkSite(urlPage2),
+                       SorsLoadBalancer.checkSite(urlPage3)
                   ]);
                 
                   console.log("Reachable urlPage2?", isUrl2Active);
                   console.log("Reachable urlPage3?", isUrl3Active);                            
             })();
             
-            // var request = new XMLHttpRequest();
-            // var request2 = new XMLHttpRequest();
-            // var request3 = new XMLHttpRequest();
-
-            /*
-            request.open('GET', urlPage1, true);
-            request.onerror = function () {
-                isUrl1Active = false;
-                SorsLoadBalancer._mirrorCheck++;
-            };
-            request.onload = function () {
-                if (this.status === 404) {
-                    isUrl1Active = false;
-                }
-                else if (this.status === 200) {
-                    isUrl1Active = true;
-                }
-                SorsLoadBalancer._mirrorCheck++;
-
-            };
-            request.onreadystatechange = function () {
-                if (request.readyState === 4 && request.status === 200) {
-                    SorsLoadBalancer._mirrorCheck++;
-                    isUrl1Active = false;
-                }
-                else if (request.readyState === 4 && request.status === 0) {
-                    isUrl1Active = false;
-                    return;
-                }
-            };
-
-            request2.open('GET', urlPage2, true);
-            request2.onerror = function () {
-                isUrl2Active = false;
-                SorsLoadBalancer._mirrorCheck++;
-            };
-            request2.onload = function () {
-                if (this.status === 404) {
-                    isUrl2Active = false;
-                }
-                else if (this.status === 200) {
-                    isUrl2Active = true;
-                }
-                SorsLoadBalancer._mirrorCheck++;
-            };
-            request2.onreadystatechange = function () {
-                if (request2.readyState === 4 && request2.status === 200) {
-                    SorsLoadBalancer._mirrorCheck++;
-                    isUrl2Active = false;
-                }
-                else if (request2.readyState === 4 && request2.status === 0) {
-                    isUrl2Active = false;
-                    return;
-                }
-            };
-
-            request3.open('GET', urlPage3, true);
-            request3.onerror = function () {
-                isUrl3Active = false;
-                SorsLoadBalancer._mirrorCheck++;
-            };
-            request3.onload = function () {
-                if (this.status === 404) {
-                    isUrl3Active = false;
-                }
-                else if (this.status === 200) {
-                    isUrl3Active = true;
-                }
-                SorsLoadBalancer._mirrorCheck++;
-            };
-            request3.onreadystatechange = function () {
-                if (request3.readyState === 4 && request3.status === 200) {
-                    SorsLoadBalancer._mirrorCheck++;
-                    isUrl3Active = false;
-                }
-                else if (request3.readyState === 4 && request3.status === 0) {
-                    isUrl3Active = false;
-                    return;
-                }
-            };
-
-            request.send();
-            request2.send();
-            request3.send();
-            
-            */
-
+          
 
             const myRefreshFunction = function () {
                 setTimeout(function () {
@@ -311,6 +208,7 @@
 //    });
 
 //})($);
+
 
 
 
