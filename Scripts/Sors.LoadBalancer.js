@@ -37,11 +37,11 @@
         checkSite: function (url) {
              return fetch(url, { mode: 'no-cors' })
                 .then(() => {
-                 
+                  SorsLoadBalancer._mirrorCheck++;
                   return true;  
                 })
                 .catch(() => {
-                  // Network error or site down
+                  SorsLoadBalancer._mirrorCheck++;
                   return false;  // site is not reachable
                 });
         },
@@ -56,12 +56,8 @@
             var isUrl1Active = null;
             var isUrl2Active = null;
             var isUrl3Active = null;
-
-            // var request = new XMLHttpRequest();
-            // var request2 = new XMLHttpRequest();
-            // var request3 = new XMLHttpRequest();
-
-          
+           
+           /*
             (async () => {
                   isUrl2Active = await SorsLoadBalancer.checkSite(urlPage2);
                   console.log("Reachable?", isUrl2Active);
@@ -73,9 +69,22 @@
                   console.log("Reachable?", isUrl3Active);
                   SorsLoadBalancer._mirrorCheck++;
              })();
+            */
+
+
+            (async () => {
+                  const [isUrl2Active, isUrl3Active] = await Promise.all([
+                    SorsLoadBalancer.checkSite(urlPage2),
+                    SorsLoadBalancer.checkSite(urlPage3)
+                  ]);
+                
+                  console.log("Reachable urlPage2?", isUrl2Active);
+                  console.log("Reachable urlPage3?", isUrl3Active);                            
+            })();
             
-
-
+            // var request = new XMLHttpRequest();
+            // var request2 = new XMLHttpRequest();
+            // var request3 = new XMLHttpRequest();
 
             /*
             request.open('GET', urlPage1, true);
@@ -302,6 +311,7 @@
 //    });
 
 //})($);
+
 
 
 
