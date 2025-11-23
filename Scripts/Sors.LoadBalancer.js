@@ -27,6 +27,24 @@
         _mirrorCheck: 0,
         _lock: false,
 
+        /*
+        (async () => {
+          const isUp = await SorsLoadBalancer.checkSite("https://sors.somee.com");
+          console.log("Reachable?", isUp);
+        })();
+        */
+
+        checkSite: function (url) {
+             return fetch(url, { mode: 'no-cors' })
+                .then(() => {
+                 
+                  return true;  
+                })
+                .catch(() => {
+                  // Network error or site down
+                  return false;  // site is not reachable
+                });
+        },
 
         loadBalancer: function (queryParametars) {
 
@@ -269,6 +287,7 @@
 //    });
 
 //})($);
+
 
 
 
