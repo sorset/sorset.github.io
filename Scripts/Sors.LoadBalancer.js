@@ -51,17 +51,33 @@
             var urlPage1 = "https://" + SorsEndpoint.Server1Domain() + "/";
             var urlPage2 = "https://" + SorsEndpoint.Server2Domain() + "/";
             var urlPage3 = "https://" + SorsEndpoint.Server3Domain() + "/";
-
+            var currentUrlPage = location.protocol + "//" + $(location).attr('hostname') + "/";
+            
             var isUrl1Active = null;
             var isUrl2Active = null;
             var isUrl3Active = null;
 
-            var request = new XMLHttpRequest();
-            var request2 = new XMLHttpRequest();
-            var request3 = new XMLHttpRequest();
+            // var request = new XMLHttpRequest();
+            // var request2 = new XMLHttpRequest();
+            // var request3 = new XMLHttpRequest();
 
-            var currentUrlPage = location.protocol + "//" + $(location).attr('hostname') + "/";
+          
+            (async () => {
+                  const isUrl2Active = await SorsLoadBalancer.checkSite(urlPage2);
+                  console.log("Reachable?", isUrl2Active);
+                  SorsLoadBalancer._mirrorCheck++;
+            })();
 
+             (async () => {
+                  const isUrl3Active = await SorsLoadBalancer.checkSite(urlPage3);
+                  console.log("Reachable?", isUrl3Active);
+                  SorsLoadBalancer._mirrorCheck++;
+            })();
+            
+
+
+
+            /*
             request.open('GET', urlPage1, true);
             request.onerror = function () {
                 isUrl1Active = false;
@@ -138,10 +154,11 @@
                 }
             };
 
-            // request.send();
+            request.send();
             request2.send();
             request3.send();
-
+            
+            */
 
 
             const myRefreshFunction = function () {
@@ -177,8 +194,6 @@
             };
 
             myRefreshFunction();
-
-
         },
 
 
@@ -287,6 +302,7 @@
 //    });
 
 //})($);
+
 
 
 
