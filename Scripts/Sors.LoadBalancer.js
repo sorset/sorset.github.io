@@ -63,16 +63,16 @@
 
           
             (async () => {
-                  const isUrl2Active = await SorsLoadBalancer.checkSite(urlPage2);
+                  isUrl2Active = await SorsLoadBalancer.checkSite(urlPage2);
                   console.log("Reachable?", isUrl2Active);
                   SorsLoadBalancer._mirrorCheck++;
             })();
 
-             (async () => {
-                  const isUrl3Active = await SorsLoadBalancer.checkSite(urlPage3);
+            (async () => {
+                  isUrl3Active = await SorsLoadBalancer.checkSite(urlPage3);
                   console.log("Reachable?", isUrl3Active);
                   SorsLoadBalancer._mirrorCheck++;
-            })();
+             })();
             
 
 
@@ -302,6 +302,7 @@
 //    });
 
 //})($);
+
 
 
 
