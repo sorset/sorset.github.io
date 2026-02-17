@@ -82,9 +82,9 @@
                         else if (isUrl2Active && isUrl3Active && roundRobin > 0) {
                             window.location.href = urlPage3 + queryParametars;
                         }
-                        else if (isUrl1Active) {
-                            window.location.href = urlPage1 + queryParametars;
-                        }
+                        // else if (isUrl1Active) {
+                        //    window.location.href = urlPage1 + queryParametars;
+                        // }
                         else if (isUrl2Active) {
                             window.location.href = urlPage2 + queryParametars;
                         }
@@ -208,6 +208,7 @@
 //    });
 
 //})($);
+
 
 
 
