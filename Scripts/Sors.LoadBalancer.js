@@ -34,7 +34,7 @@
         })();
         */
 
-        checkSite: function (url) {
+        checkSite2: function (url) {
              return fetch(url, { mode: 'no-cors' })
                 .then(() => {
                   SorsLoadBalancer._mirrorCheck++;
@@ -45,6 +45,29 @@
                   return false;  // site is not reachable
                 });
         },
+
+        checkSite: function (url, timeout = 3000) {
+    const controller = new AbortController();
+
+    const timer = setTimeout(() => {
+        controller.abort();
+    }, timeout);
+
+    return fetch(url, {
+        mode: 'no-cors',
+        signal: controller.signal
+    })
+    .then(() => {
+        clearTimeout(timer);
+        SorsLoadBalancer._mirrorCheck++;
+        return true;
+    })
+    .catch(() => {
+        clearTimeout(timer);
+        SorsLoadBalancer._mirrorCheck++;
+        return false; // unreachable or timed out
+    });
+},
 
         loadBalancer: function (queryParametars) {
 
