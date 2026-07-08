@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="SORS Currency Change Calculator EUR-BGN" />
+    <meta name="description" content="SORS Currency Change Calculator EUR-BGN">
+    <meta name="robots" content="index,follow" />
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0, max-age=0">
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="Clear-Site-Data" content="cache" />
+    <meta name="author" content="Sors">
+
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge;IE=11;IE=10;IE=9;IE=8;IE=7;chrome=1;" />
+    <link rel="shortcut icon" href="favicon.ico" />
+
+    <script src="Scripts/Sors.Net.Cache.js?ver=2.0.3.1074"></script>
+
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SORS Currency Change Calculator EUR-BGN</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .exchange-rate {
+            background-color: #e8f4fc;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 500;
+            color: #2c3e50;
+            border-left: 4px solid #3498db;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: background-color 0.2s;
+        }
+
+        .form-row:hover {
+            background-color: #f0f0f0;
+        }
+
+        .form-row label {
+            flex: 0 0 180px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-row input,
+        .form-row select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .form-row input {
+            flex: 0 0 150px;
+        }
+
+        .form-row select {
+            flex: 0 0 100px;
+        }
+
+        .value-display {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        #changeValue {
+            color: #27ae60;
+            /* Default green for positive change */
+        }
+
+        .negative-change {
+            color: #e74c3c !important;
+            /* Red for negative change */
+        }
+
+        .zero-change {
+            color: #7f8c8d !important;
+            /* Gray for zero change */
+        }
+
+        .unrounded-change {
+            background-color: #f0f8ff;
+            border-left: 4px solid #4169e1;
+        }
+
+        .unrounded-change label {
+            color: #4169e1;
+        }
+
+        .unrounded-value {
+            color: #4169e1;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+
+        .optional-note {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-left: 10px;
+        }
+
+        .currency-link-note {
+            font-size: 12px;
+            color: #3498db;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-row label {
+                margin-bottom: 8px;
+            }
+
+            .form-row input,
+            .form-row select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>SORS Currency Change Calculator EUR-BGN</h1>
+
+        <div class="exchange-rate">
+            Exchange Rate: 1.00 EUR = 1.95583 BGN
+        </div>
+
+        <!-- Row 1: Total Amount -->
+        <div class="form-row">
+            <label for="totalAmount">Total Amount:</label>
+            <!-- <div class="value-display">10.00 EUR</div> -->
+            <input type="number" id="totalAmount" step="0.01" value="0.00" placeholder="0.00">
+            <label>EUR</label>
+        </div>
+
+        <!-- Row 2: Client Amount -->
+        <div class="form-row">
+            <label for="clientAmount">Client Amount:</label>
+            <input type="number" id="clientAmount" step="0.01" value="0.00" placeholder="0.00">
+            <select id="clientCurrency">
+                <option value="EUR">EUR</option>
+                <option value="BGN" selected>BGN</option>
+            </select>
+        </div>
+
+        <!-- Row 3: Optional Currency Change -->
+        <div class="form-row">
+            <label for="optionalAmount">Optional Currency Change: <span class="optional-note">(optional)</span></label>
+            <input type="number" id="optionalAmount" step="0.01" value="0.00" placeholder="0.00">
+            <select id="optionalCurrency">
+                <option value="EUR">EUR</option>
+                <option value="BGN" selected>BGN</option>
+            </select>
+            <!-- <div class="currency-link-note">Row 4 currency will auto-switch to opposite</div> -->
+        </div>
+
+        <!-- Row 4: Change -->
+        <div class="form-row">
+            <label for="changeValue">Change:</label>
+            <div id="changeValue" class="value-display negative-change">-45.79 EUR</div> &nbsp; &nbsp;
+            <select id="changeCurrency">
+                <option value="EUR" selected>EUR</option>
+                <option value="BGN">BGN</option>
+            </select>
+        </div>
+
+        <!-- Row 5: Unrounded Change -->
+        <div class="form-row unrounded-change">
+            <label for="unroundedChangeValue">Unrounded Change:</label>
+            <div id="unroundedChangeValue" class="unrounded-value">0.000 EUR</div>
+        </div>
+    </div>
+
+    <script>
+
+        requireScript('jquery.min', '2.0.3.1074', 'Scripts/jquery.min.js?ver=2.0.3.1074');
+        if (!_isJqLoad())
+            _injectScriptForce("Scripts/jquery.min.js?ver=2.0.3.1074");
+
+        requireScript('Sors.Change', '2.0.3.1074', 'Scripts/Sors.Change.js?ver=2.0.3.1074');
+
+
+    </script>
+</body>
+
+</html>
