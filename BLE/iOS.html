@@ -1,0 +1,856 @@
+<!-- 
+Bluefy: A free, popular Web BLE browser available on the App Store built specifically for this purpose.  
+BLE Link: Another dedicated iOS browser designed to interface with IoT and BLE devices. 
+
+let SERVICE_UUID = 'BAEA6958-2543-5836-E165-38728C5B3752';
+let CHARACTERISTIC_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
+
+name: JDY-33BLE
+	CHARACTERISTIC FFE0:
+	 - FFE1 (use this)
+	 - FFE2
+
+Name: JDY-33BLE
+Service UUID: 0000ffe0-0000-1000-8000-00805f9b34fb
+Characteristic UUID: 0000ffe1-0000-1000-8000-00805f9b34fb
+
+https://sors.somee.com/BLE/iOS.html
+
+
+chrome://settings/content/bluetoothScanning
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sors DoorLock iPhone</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 20px; text-align: center; max-width: 400px; margin: auto; }
+        input { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; font-family: monospace; font-size: 12px; }
+        /* button { padding: 15px 30px; font-size: 16px; font-weight: bold; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 8px 0; width: 100%; }         */
+        
+
+		button { 
+            padding: 15px 30px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin: 8px 0; 
+            width: 100%; 
+            
+            /* --- REACT NATIVE TOUCH-SIMULATION --- */
+            -webkit-tap-highlight-color: transparent; /* Kills the ugly iOS gray tap-flash */
+            -webkit-touch-callout: none;              /* Kills the long-press "Copy/Share" system popup */
+            user-select: none;                        /* Prevents the button text from getting highlighted */
+            touch-action: manipulation;               /* Tells iOS: "Execute instantly, do not wait for a double-tap" */
+            
+            /* The snap-back animation when the user lets go */
+            transition: opacity 0.15s ease-out, transform 0.08s ease-out; 
+        } 
+
+        /* The "Press and Hold" state */
+        button:active {
+            opacity: 0.35;          /* The classic React Native opacity dip */
+            transform: scale(0.96); /* A subtle 4% physical push-down effect */
+            transition: opacity 0.02s !important; /* Instant response on touch-down */
+        }
+		
+		
+		#configPanel { margin-bottom: 20px; padding: 15px; background: #f2f2f7; border-radius: 8px; text-align: left; }
+        #configPanel label { font-size: 12px; font-weight: bold; color: #666; display: block; margin-top: 8px; }        
+        #scanBtn { background-color: #007aff; }
+        #reconnectBtn { background-color: #ff9500; display: none; } 
+        #connectBtn { background-color: #34c759; display: none; } 
+        #saveConfigBtn { background-color: #5856d6; margin-top: 12px;}        
+        #controlPanel { display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee; }
+
+		#operationBtn { background-color: #007aff; }
+		#aboutUsBtn { background-color: #007aff; }
+      
+		#unlockBtn { background-color: #34c759;  } 
+        #lockBtn { background-color: #ff3b30; }  
+        #infoBtn { background-color: #8e8e93; }  
+
+        #infoDisplay { display: none; margin-top: 15px; padding: 15px; background-color: #2c2c2e; color: #fff; border-radius: 8px; font-size: 12px; text-align: left; word-wrap: break-word; font-family: monospace; }              
+        #resetBtn { background-color: transparent; border: 2px solid #ff3b30; color: #ff3b30; font-size: 14px; margin-top: 35px; }  
+		#status {display: none; margin-top: 15px; font-size: 14px; color: #333; min-height: 40px; padding: 10px; background: #e5e5ea; border-radius: 6px; white-space: pre-wrap; text-align: left; }
+
+		h2 {
+			color: white;
+			text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5); /* Adds a shadow so it's readable even if the video is light */
+		}
+
+		#aboutUsPanel {
+            display: none; /* Hidden by default */
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.6) !important;
+            border-radius: 12px;
+            border-top: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+
+        #aboutUsPanel h3 { margin: 0 0 2px 0; color: #1c1c1e; text-align: center; font-size: 18px;}
+        #aboutUsPanel .tagline { margin: 0 0 15px 0; font-size: 11px; color: #666; text-align: center; font-weight: 500;}
+        
+        #aboutUsPanel .about-logo {
+            
+            border-radius: 14px; 
+            display: block; 
+            margin: 0 auto 12px auto;
+             
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        #aboutUsPanel hr { border: 0; border-top: 1px solid rgba(0,0,0,0.08); margin: 12px 0; }
+
+        #aboutUsPanel .contact-info p {
+            font-size: 13px;
+            color: #2c2c2e;
+            margin: 10px 0;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        #aboutUsPanel .contact-info p span { margin-right: 8px; font-size: 15px; }
+        #aboutUsPanel .contact-info a { color: #007aff; text-decoration: none; }
+
+        #aboutUsPanel .app-meta {
+            text-align: center;
+            font-size: 10px;
+            color: #080809;
+            margin-top: 20px;
+            font-family: monospace;
+        }
+		
+    </style>
+</head>
+
+<body>
+
+	<video autoplay muted loop playsinline id="bgVideo">
+		<source src="1.mp4" type="video/mp4">
+	</video>
+
+	<style>
+	
+		#bgVideo {
+			position: fixed;
+			right: 0;
+			bottom: 0;
+			min-width: 100%;
+			min-height: 100%;
+			z-index: -1; 
+			object-fit: cover;
+		}
+
+		
+		body { 
+			font-family: -apple-system, sans-serif; 
+			padding: 20px; 
+			text-align: center; 
+			max-width: 400px; 
+			margin: auto;
+			background: rgba(255, 255, 255, 0.8);  
+			/* backdrop-filter: blur(10px);   */
+			border-radius: 15px;
+			margin-top: 50px;
+		}
+		
+		
+		#configPanel, #status, #infoDisplay {
+			background: rgba(255, 255, 255, 0.5) !important;
+		}
+	</style>
+
+	<div class="avatar"><img src="pz.png" alt="" class="img-responsive img-circle"></div>
+    <h2>Sors DoorLock iPhone</h2>
+
+	
+
+    <div id="configPanel">
+        <label>SERVICE UUID</label>
+        <input type="text" id="serviceInput" value="0000ffe0-0000-1000-8000-00805f9b34fb">
+
+        <label>CHARACTERISTIC UUID</label>
+        <input type="text" id="charInput" value="0000ffe1-0000-1000-8000-00805f9b34fb">
+        
+        <button id="saveConfigBtn">Save BLE Device</button>
+		
+    </div>
+    <!-- <button id="resetBtn">⚠️ Delete Device</button> -->
+
+    <button id="scanBtn">Scan for Devices</button>
+    <button id="reconnectBtn">Reconnect</button>
+    <button id="connectBtn">Connect</button>
+
+	<button id="operationBtn">Operation</button>
+	<button id="aboutUsBtn">About Us</button>
+
+
+    
+    <div id="status">Status: Initializing...</div>
+
+    <div id="controlPanel">
+        <button id="unlockBtn">UNLOCK</button>
+        <button id="lockBtn">LOCK</button>
+        <button id="infoBtn">Diagnostics</button>
+        <div id="infoDisplay"></div>
+    </div>
+
+	<div id="aboutUsPanel">
+        <img src="pz.png" alt="Company Logo" class="about-logo">
+        <h3>Sors Global Engineering Technology</h3>
+        <p class="tagline">Next-Generation Secure Access</p>
+        
+        <hr>
+
+        <div class="contact-info">
+            <p><span>📍</span> <strong>Address:</strong> WP-001, <br>Sofia, Bulgaria</p>
+            <p><span>📞</span> <strong>Phone:</strong><br><a href="tel:+359888888888">(02) 002, ext 003</a></p>
+            <p><span>✉️</span> <strong>Support:</strong><br><a href="mailto:pz.ibm@abv.bg">pz.ibm@abv.bg</a></p>
+            <p><span>🌐</span> <strong>Portal:</strong><br><a href="https://sors.somee.com" target="_blank">sors.somee.com</a></p>
+        </div>
+
+        <div class="app-meta">
+            Sors iOS BLE Client v1.2.0<br>
+            Powered by Sors Door Lock Micro-Controller Stack
+        </div>
+    </div>
+
+	 <button id="resetBtn">⚠️ Delete Device</button>
+   
+    <script>      
+
+		let isBusyAutoConnect = false;
+		let spamInterval = null;
+
+		document.addEventListener('touchstart', () => {}, { passive: true });
+
+		let SERVICE_UUID        = '0000ffe0-0000-1000-8000-00805f9b34fb'; 
+		let CHARACTERISTIC_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
+
+        // const FALLBACK_SERVICE  = '7c7bcc5e-27a2-11e9-ab14-d663bd873d93';
+
+        let bluetoothDevice = null;
+        let gattCharacteristic = null;
+
+        const scanBtn = document.getElementById('scanBtn');
+        const reconnectBtn = document.getElementById('reconnectBtn');
+        const connectBtn = document.getElementById('connectBtn');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const lockBtn = document.getElementById('lockBtn');
+        const infoBtn = document.getElementById('infoBtn');
+        const infoDisplay = document.getElementById('infoDisplay');
+        const statusText = document.getElementById('status');
+        const controlPanel = document.getElementById('controlPanel');
+        const configPanel = document.getElementById('configPanel');
+
+
+		const operationBtn = document.getElementById('operationBtn');
+		const aboutUsBtn = document.getElementById('aboutUsBtn');
+
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        function parseError(err) {
+            if (!err) return "Unknown error";
+            if (typeof err === 'string') return err;
+            return err.message || JSON.stringify(err);
+        }
+
+        function setStatus(text, isError = false) {
+			const timestamp = new Date().toLocaleTimeString().split(' ')[0];
+
+            statusText.style.background = isError ? '#ffd8d8' : '#e5e5ea';
+            statusText.style.color = isError ? '#d00000' : '#333';
+
+            statusText.innerText += "\n" + `> ${timestamp} | ${text}`;
+        }
+
+		/*
+		async function silentAutoConnect() {
+			const savedDeviceId = localStorage.getItem('savedDeviceId');
+			if (!savedDeviceId || !navigator.bluetooth || !navigator.bluetooth.getDevices) 
+			{
+				return;
+			}
+
+			try 
+			{
+				const devices = await navigator.bluetooth.getDevices();
+				const targetDevice = devices.find(d => d.id === savedDeviceId);
+
+				if (targetDevice) {
+					bluetoothDevice = targetDevice;
+					bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+					
+					setStatus("Found saved lock. Auto-connecting...");
+					await connectToGatt(); 
+				}
+			} 
+			catch (err) {
+				console.log("Silent check rejected/empty.");
+			}
+		}
+*/
+		async function forceConnection() 
+		{
+		 	
+			// scanBtn.click();
+			// let isBusy = false;
+			// let spamInterval = null;
+		
+			const ghostBtn = document.createElement('button');
+			ghostBtn.onclick = async () => 
+			{ 
+
+				if (isBusyAutoConnect) 
+					return;
+
+				isBusyAutoConnect = true;
+
+				try
+				{
+				
+					const requiredServices = ['0000ffe0-0000-1000-8000-00805f9b34fb'];
+
+					bluetoothDevice = await navigator.bluetooth.requestDevice({
+						acceptAllDevices: true,
+						optionalServices: requiredServices
+					});
+
+					bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+					
+					const server = await bluetoothDevice.gatt.connect();				
+					await sleep(2000);				
+					const services = await server.getPrimaryServices();        						
+					const service = await server.getPrimaryService(SERVICE_UUID);							
+					gattCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+			
+					
+					setStatus(`LINK ACTIVE: Connected`);
+					configPanel.style.display = 'none';
+					scanBtn.style.display = 'none';
+					reconnectBtn.style.display = 'none';
+					connectBtn.style.display = 'none';
+					controlPanel.style.display = 'block';	
+					statusText.style.display = 'none';
+
+
+					clearInterval(spamInterval); 
+					spamInterval = null;         
+
+
+					/*
+					if (navigator.bluetooth  && navigator.bluetooth.getDevices )			
+					{         												
+						const savedService  = localStorage.getItem('savedServiceUUID');
+            			const savedChar     = localStorage.getItem('savedCharUUID');
+						const savedDeviceId = localStorage.getItem('savedDeviceId'); 
+
+						const devices = await navigator.bluetooth.getDevices();
+						const targetDevice = devices.find(d => d.id === savedDeviceId);
+
+						if (targetDevice) {
+							bluetoothDevice = targetDevice;
+							bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+						}
+
+						await connectToGatt();
+						
+						if (!bluetoothDevice) 
+							return;		
+																
+						const server = await bluetoothDevice.gatt.connect();				
+						await sleep(2000);				
+						const services = await server.getPrimaryServices();        						
+						const service = await server.getPrimaryService(SERVICE_UUID);							
+						gattCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+				
+						
+						setStatus(`LINK ACTIVE: Connected`);
+						configPanel.style.display = 'none';
+						scanBtn.style.display = 'none';
+						reconnectBtn.style.display = 'none';
+						connectBtn.style.display = 'none';
+						controlPanel.style.display = 'block';	
+						statusText.style.display = 'none';
+
+
+						clearInterval(spamInterval); 
+						spamInterval = null;         
+											
+					}
+				*/
+
+
+				}
+				finally
+				{
+					isBusyAutoConnect = false;
+				}
+				
+
+			};
+
+
+			spamInterval = setInterval(async () => {
+				ghostBtn.click();
+
+			}, 5000);
+
+			// setInterval(() => ghostBtn.click(), 2000);
+
+			 
+
+			// else
+			// {
+			// 	const requiredServices = ['0000ffe0-0000-1000-8000-00805f9b34fb'];
+            //     bluetoothDevice = await navigator.bluetooth.requestDevice({
+            //         acceptAllDevices: true,
+            //         optionalServices: requiredServices
+            //     });
+            //     bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+			// }
+
+			
+		}
+
+        // --- 1. INITIALIZE ---
+        window.onload = async () => {
+            const savedService  = localStorage.getItem('savedServiceUUID');
+            const savedChar     = localStorage.getItem('savedCharUUID');
+            const savedDeviceId = localStorage.getItem('savedDeviceId'); 
+
+			
+ 			if (savedService && savedChar && savedDeviceId) 
+			{	
+				// await forceConnection();
+
+				scanBtn.style.display = 'none';
+				configPanel.style.display = 'none';
+
+				operationBtn.style.display = 'block';
+				return;
+			}
+			else
+			{
+				operationBtn.style.display = 'none';
+			}
+
+            if (savedService && savedChar) {
+                SERVICE_UUID = savedService;
+                CHARACTERISTIC_UUID = savedChar;
+                document.getElementById('serviceInput').value = savedService;
+                document.getElementById('charInput').value = savedChar;
+
+				configPanel.style.display = 'none';
+            }
+			else
+			{
+				configPanel.style.display = 'block';
+				scanBtn.style.display = 'none';
+			}
+
+            if (navigator.bluetooth && navigator.bluetooth.getDevices) {
+                try 
+				{
+                    const devices = await navigator.bluetooth.getDevices();
+                    const targetDevice = devices.find(d => d.id === savedDeviceId);
+
+                    if (targetDevice) {
+                        bluetoothDevice = targetDevice;
+                        bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+                        setStatus(`Found paired lock: "${bluetoothDevice.name || 'JDY-33'}". Ready.`);
+                        scanBtn.style.display = 'none';
+                        reconnectBtn.style.display = 'block';
+                        return;
+                    }
+                } 
+				catch (e) 
+				{ 
+					console.log("getDevices session check skipped."); 
+				}
+            }
+            setStatus("System ready. Tap Scan.");
+        };
+
+        // --- 2. CONFIG SAVER ---
+        document.getElementById('saveConfigBtn').addEventListener('click', () => {
+            const s = document.getElementById('serviceInput').value.trim();
+            const c = document.getElementById('charInput').value.trim();
+            if (s.length >= 4 && c.length >= 4) {
+                localStorage.setItem('savedServiceUUID', s);
+                localStorage.setItem('savedCharUUID', c);
+                SERVICE_UUID = s;
+                CHARACTERISTIC_UUID = c;
+                setStatus('Target updated. Ready to connect.');
+
+
+				configPanel.style.display = 'none';
+				scanBtn.style.display = 'block';
+            } 
+			else {
+                alert("Invalid UUID format.");
+            }
+        });
+
+        // --- THE UPGRADED GLOBAL KILL-SWITCH ---
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if(confirm("Sever Bluetooth link and wipe all saved hardware data?")) {
+                try {
+                    // Force-kill open radio pipes before the reload kills the JS thread
+                    if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                        bluetoothDevice.gatt.disconnect();
+                    }
+
+					// configPanel.style.display = 'block';
+
+					configPanel.style.display = 'none';
+                } catch(e) {}
+                
+                localStorage.clear();
+                window.location.reload();
+            }
+        });
+
+
+		operationBtn.addEventListener('click', async () => 
+		{
+            try 
+			{
+				
+				const savedService  = localStorage.getItem('savedServiceUUID');
+            	const savedChar     = localStorage.getItem('savedCharUUID');
+            	const savedDeviceId = localStorage.getItem('savedDeviceId'); 
+
+			
+				if (savedService && savedChar && savedDeviceId) 
+				{	
+					
+					const requiredServices = ['0000ffe0-0000-1000-8000-00805f9b34fb'];
+
+					bluetoothDevice = await navigator.bluetooth.requestDevice({
+						acceptAllDevices: true,
+						optionalServices: requiredServices
+					});
+
+                	bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+
+
+
+					// await connectToGatt();
+					if (!bluetoothDevice) 
+						return;
+
+					const server = await bluetoothDevice.gatt.connect();				
+					// await sleep(2000);
+
+					/*
+					spamInterval = setInterval(async ()  => {
+
+						clearInterval(spamInterval); 
+						spamInterval = null;   
+						
+						
+
+					}, 5000);
+					*/
+
+					const services = await server.getPrimaryServices();
+
+					const service = await server.getPrimaryService(SERVICE_UUID);							 
+					gattCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);						
+					gattCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+					
+					configPanel.style.display = 'none';
+					scanBtn.style.display = 'none';
+					reconnectBtn.style.display = 'none';
+					connectBtn.style.display = 'none';
+					controlPanel.style.display = 'block';	
+					statusText.style.display = 'none';
+					operationBtn.style.display = 'none';
+					aboutUsBtn.style.display = 'none';
+					
+				}
+						
+            } 
+			catch (error) {
+                setStatus(`Operation : ${parseError(error)}`, true);
+            }
+        });
+
+		aboutUsBtn.addEventListener('click', async () => {
+            try 
+			{
+				
+				if (aboutUsPanel.style.display === 'block') 
+				{
+					aboutUsPanel.style.display = 'none';
+				} 
+				else {
+					aboutUsPanel.style.display = 'block';
+					controlPanel.style.display = 'none'; 
+				}
+
+            } catch (error) {
+                setStatus(`About Us : ${parseError(error)}`, true);
+            }
+        });
+
+
+        // --- 3. BLUETOOTH ACTIONS ---
+        scanBtn.addEventListener('click', async () => {
+            try {
+				
+				isBusyAutoConnect = true;
+				clearInterval(spamInterval); 
+				spamInterval = null;   
+
+                setStatus('Scanning airspace...');
+                // const requiredServices = [...new Set([SERVICE_UUID, FALLBACK_SERVICE, '00001801-0000-1000-8000-00805f9b34fb'])];
+
+				const requiredServices = ['0000ffe0-0000-1000-8000-00805f9b34fb'];
+
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: requiredServices
+                });
+
+                bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+                setStatus(`Target Acquired: ${bluetoothDevice.name || 'Lock'}. Tap Connect.`);
+                
+                scanBtn.style.display = 'none';
+                connectBtn.style.display = 'block';
+
+            } catch (error) {
+                setStatus(`Scan cancelled: ${parseError(error)}`, true);
+            }
+        });
+
+        reconnectBtn.addEventListener('click', () => connectToGatt());
+        connectBtn.addEventListener('click', () => connectToGatt());
+/*
+        async function connectToGatt2() {
+            if (!bluetoothDevice) return;
+            try {
+                setStatus('Opening GATT stream...');
+                const server = await bluetoothDevice.gatt.connect();
+                
+                await sleep(350); 
+
+                setStatus(`Resolving Service ${SERVICE_UUID.substring(0,8)}...`);
+                const service = await server.getPrimaryService(SERVICE_UUID);
+                
+                setStatus(`Resolving Char ${CHARACTERISTIC_UUID.substring(0,8)}...`);
+                gattCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+                localStorage.setItem('savedServiceUUID', SERVICE_UUID);
+                localStorage.setItem('savedCharUUID', CHARACTERISTIC_UUID);
+                localStorage.setItem('savedDeviceId', bluetoothDevice.id); 
+
+                setStatus(`LINK ACTIVE: ${bluetoothDevice.name || 'Secure Lock'}`);
+
+                configPanel.style.display = 'none';
+                scanBtn.style.display = 'none';
+                reconnectBtn.style.display = 'none';
+                connectBtn.style.display = 'none';
+                controlPanel.style.display = 'block';
+
+            } catch (error) {
+                setStatus(`Handshake failed: ${parseError(error)}`, true);
+                onDisconnected();
+            }
+        }
+
+		async function connectToGatt3() {
+            if (!bluetoothDevice) return;
+            try {
+                setStatus('Opening GATT...');
+                const server = await bluetoothDevice.gatt.connect();
+                
+                // Add this: Wait for the chip to "warm up" after the connection event
+                await sleep(2000); 
+
+                setStatus(`Discovering Service...`);
+                const service = await server.getPrimaryService(SERVICE_UUID);
+
+				
+                setStatus(`Discovering Characteristic...`);
+                gattCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+                // Commit success
+                localStorage.setItem('savedServiceUUID', SERVICE_UUID);
+                localStorage.setItem('savedCharUUID', CHARACTERISTIC_UUID);
+                localStorage.setItem('savedDeviceId', bluetoothDevice.id); 
+
+                setStatus(`LINK ACTIVE: Connected`);
+
+                configPanel.style.display = 'none';
+                scanBtn.style.display = 'none';
+                reconnectBtn.style.display = 'none';
+                connectBtn.style.display = 'none';
+                controlPanel.style.display = 'block';
+
+            } catch (error) {
+                // If it fails, don't just give up. Give it one more heartbeat.
+                setStatus(`Connection unstable. Retrying...`, true);
+                await sleep(1000);
+                
+                // If we are still here, force a full disconnect and reset the UI
+                if (bluetoothDevice.gatt.connected) {
+                    bluetoothDevice.gatt.disconnect();
+                }
+                onDisconnected();
+            }
+        }
+
+	 
+
+*/
+	
+		async function connectToGatt() {
+			
+			if (!bluetoothDevice) 
+				return;
+			
+			try {
+				setStatus('Opening GATT...');
+				const server = await bluetoothDevice.gatt.connect();
+				
+				await sleep(2000);
+
+				setStatus(`Fetching all available services...`);
+				const services = await server.getPrimaryServices();
+        
+				let logMsg = "Found Services:\n";
+				services.forEach(s => {
+					logMsg += `> UUID: ${s.uuid}\n`;
+				});
+				setStatus(logMsg);
+
+
+				setStatus(`Discovering Service...`);
+				const service = await server.getPrimaryService(SERVICE_UUID);
+				
+				setStatus(`Discovering Characteristic...`);
+				gattCharacteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+				// Success
+				localStorage.setItem('savedServiceUUID', SERVICE_UUID);
+				localStorage.setItem('savedCharUUID', CHARACTERISTIC_UUID);
+				localStorage.setItem('savedDeviceId', bluetoothDevice.id); 
+
+				setStatus(`LINK ACTIVE: Connected`);
+
+				configPanel.style.display = 'none';
+				scanBtn.style.display = 'none';
+				reconnectBtn.style.display = 'none';
+				connectBtn.style.display = 'none';
+				controlPanel.style.display = 'block';
+
+			} catch (error) {
+				setStatus(`Error: ${parseError(error)}`, true);
+				
+				// Cleanup if possible
+				try {
+					if (bluetoothDevice.gatt.connected) {
+						bluetoothDevice.gatt.disconnect();
+					}
+				} catch(e) {}
+				
+				// Wait a moment then allow the user to try again via onDisconnected UI
+				await sleep(1000);
+				onDisconnected();
+			}
+		}
+			// --- 4. HARDWARE COMMANDS ---
+        unlockBtn.addEventListener('click', async () => {
+            if (!gattCharacteristic) 
+				return;
+
+            try {
+                setStatus('Transmitting UNLOCK...');
+                const payload = new Uint8Array([0xA0, 0x01, 0x00, 0xA1]);
+                await gattCharacteristic.writeValueWithResponse(payload);
+                setStatus('DOOR UNLOCKED');
+            } catch (err) { setStatus(`Unlock rejected: ${parseError(err)}`, true); }
+        });
+
+        lockBtn.addEventListener('click', async () => {
+            if (!gattCharacteristic) 
+				return;
+
+            try {
+                setStatus('Transmitting LOCK...');
+                const payload = new Uint8Array([0xA0, 0x01, 0x01, 0xA2]);
+                await gattCharacteristic.writeValueWithResponse(payload);
+                setStatus('DOOR LOCKED');
+            } catch (err) { setStatus(`Lock rejected: ${parseError(err)}`, true); }
+        });
+
+        infoBtn.addEventListener('click', () => {
+            const isVis = infoDisplay.style.display === 'block';
+            infoDisplay.style.display = isVis ? 'none' : 'block';
+            if(!isVis) {
+                infoDisplay.innerHTML = `
+                    DEVICE NAME : ${bluetoothDevice?.name || 'N/A'}<br>
+                    WEB_KIT ID  : ${bluetoothDevice?.id || 'N/A'}<br>
+                    TARGET_SRV  : ${SERVICE_UUID}<br>
+                    TARGET_CHR  : ${CHARACTERISTIC_UUID}<br>
+                    GATT_STATE  : ${bluetoothDevice?.gatt?.connected ? 'CONNECTED' : 'SEVERED'}
+                `;
+            }
+        });
+/*
+        function onDisconnected() {
+            controlPanel.style.display = 'none';
+            infoDisplay.style.display = 'none';
+            configPanel.style.display = 'block';
+
+            if (bluetoothDevice && localStorage.getItem('savedDeviceId')) {
+                reconnectBtn.style.display = 'block';
+                connectBtn.style.display = 'none';
+                setStatus('Device dropped connection. Stand closer and Reconnect.', true);
+            } else {
+                scanBtn.style.display = 'block';
+                setStatus('Disconnected. Please scan again.');
+            }
+            gattCharacteristic = null;
+        }
+*/
+
+		function onDisconnected() {
+            // Keep the UI logical: hide controls, show the scan button
+            controlPanel.style.display = 'none';
+            infoDisplay.style.display = 'none';
+            configPanel.style.display = 'block';
+
+            // Only offer Reconnect if we have a valid device object
+            if (bluetoothDevice) {
+                reconnectBtn.style.display = 'block';
+                connectBtn.style.display = 'none';
+                setStatus('Device disconnected. Check power or proximity.');
+            } else {
+                scanBtn.style.display = 'block';
+                setStatus('Disconnected. Please scan again.');
+            }
+            gattCharacteristic = null;
+        }
+
+
+    </script>
+</body>
+
+</html>
+
