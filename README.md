@@ -1,2 +1,2 @@
-# sorset.github.io
-sors.info
+https://sorset.github.io
+ 
