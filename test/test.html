@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Sors Test Builder" />
+    <meta name="description" content="Tersting, Sors">
+    <meta name="robots" content="index,follow" />
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0, max-age=0">
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="Clear-Site-Data" content="cache" />
+    <meta name="author" content="Sors">
+    <meta name="msvalidate.01" content="374673915E91B2A2D4F58FA25E323DFA" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge;IE=11;IE=10;IE=9;IE=8;IE=7;chrome=1;" />
+
+
+    <title>Sors Test Builder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        button {
+            margin-right: 10px;
+            padding: 10px 15px;
+        }
+
+        .test-container {
+            margin-top: 20px;
+        }
+
+        .step-grid,
+        .step-header {
+            display: grid;
+            grid-template-columns: 20px 23px 2fr 2fr 2fr 200px 60px 80px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .step-grid input[type="text"],
+        .step-grid input[type="number"],
+        .step-grid input[type="file"],
+        .step-grid select,
+        .step-grid textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .step-header {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 5px 0;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        #testTitle {
+            width: 40%;
+            box-sizing: border-box;
+        }
+
+        #versionApp {
+            width: 10%;
+            box-sizing: border-box;
+        }
+
+        #statusSelect {
+            width: 15%;
+            box-sizing: border-box;
+        }
+        
+    </style>
+
+    <style id="antiClickjack">
+        body {
+            display: none !important;
+        }
+    </style>
+
+    <script type="text/javascript" src="Scripts/Sors.Net.Cache.js?ver=2.0.3.1079"></script>
+
+</head>
+
+<body>
+    <h1>Sors Test Builder</h1>
+    <button onclick="TestManager.createNewTest()">New test</button>
+    <button onclick="TestManager.exportTest()">Save (Export JSON)</button>
+    <button onclick="TestManager.importTest()">Load (Import JSON)</button>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="TestManager.handleFileImport(event)">
+
+    <div class="test-container" id="testContainer"></div>
+
+    <!-- <script type="text/javascript" src="jquery-3.6.0.min.js?ver=2.0.3.1079" defer></script> -->
+
+
+    <script type="text/javascript">
+
+        if (!_isJqLoad()) {
+            _injectScriptForce("Scripts/jquery-3.6.0.min.js?ver=2.0.3.1079");
+        }
+
+        requireScript('jquery-3.6.0.min', '2.0.3.1079', 'Scripts/jquery-3.6.0.min.js?ver=2.0.3.1079', function () {
+            $(window).on("cacheReadyEvent", function (event) {
+                console.clear();
+                console.log("Cache is ready");
+                // window.location.href = "https://ee.com";
+            });
+        });
+
+        requireScript('TestManager', '2.0.3.1079', 'Scripts/Sors.TesManager.js?ver=2.0.3.1079');
+
+    </script>
+
+
+</body>
+
+</html>

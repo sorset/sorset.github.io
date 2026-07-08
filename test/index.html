@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="8;url=tests/test.html" />
+    <title>Loading</title>
+    <script type="text/javascript" src="Scripts/Sors.Net.Cache.js?ver=2.0.3.1079"></script>
+</head>
+
+<body>  
+    <h1 id="loading-text">Please wait. Loading</h1>
+
+    <script type="text/javascript">
+
+        try {
+
+            if (!_isJqLoad()) {
+                _injectScriptForce("Scripts/jquery-3.6.0.min.js?ver=2.0.3.1079");
+            }
+
+            requireScript('jquery-3.6.0.min', '2.0.3.1079', 'Scripts/jquery-3.6.0.min.js?ver=2.0.3.1079', function () {
+                $(window).on("cacheReadyEvent", function (event) {
+                    console.clear();
+                    console.log("Cache is ready");
+                    window.location.href = "/test.html";
+                });
+            });
+
+            requireScript('TestManager', '2.0.3.1079', 'Scripts/Sors.TesManager.js?ver=2.0.3.1079');
+
+        }
+        finally {
+
+            (function blinkDots() {
+                const loadingElem = document.getElementById('loading-text');
+                let dots = '';
+                let count = 0;
+
+                setInterval(() => {
+                    count = (count + 1) % 4;  
+                    dots = '.'.repeat(count);
+                    loadingElem.textContent = 'Please wait. Loading' + dots;
+                }, 500); 
+            })();
+
+        }
+    </script>
+
+</body>
+
+</html>
